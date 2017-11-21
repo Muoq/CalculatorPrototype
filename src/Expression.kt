@@ -1,10 +1,26 @@
 
 class Expression() {
 
+    companion object {
+        val operators = listOf('(', ')', '*', '/', '+', '-')
+    }
+
     var expression: MutableList<Any> = mutableListOf()
     var isNumber: MutableList<Boolean> = mutableListOf()
 
     var size: Int = 0
+
+    constructor(expressionString: String): this() {
+        for (char in expressionString) {
+            if (char in operators) {
+                addOperator(Operator(char))
+            } else if (char == ' ') {
+                continue
+            } else {
+                addNumber(char.toString().toInt())
+            }
+        }
+    }
 
     fun addNumber(num: Int) {
         expression.add(num)
@@ -40,12 +56,16 @@ class Expression() {
         isNumber.set(index, false)
     }
 
-    fun print() {
-        println(expression.toString())
+    override fun toString(): String {
+        var classString = ""
 
         for (i in 0 until expression.size) {
+            classString += (expression[i].toString())
 
+            print(isNumber[i].toString() + " ")
         }
+
+        return classString
     }
 
 }
