@@ -1,3 +1,5 @@
+import com.sun.corba.se.impl.io.TypeMismatchException
+import java.util.*
 
 class Expression() {
 
@@ -9,6 +11,9 @@ class Expression() {
     var isNumber: MutableList<Boolean> = mutableListOf()
 
     var size: Int = 0
+        get() {
+            return expression.size
+        }
 
     constructor(expressionString: String): this() {
         for (char in expressionString) {
@@ -17,7 +22,31 @@ class Expression() {
             } else if (char == ' ') {
                 continue
             } else {
-                addNumber(char.toString().toInt())
+                if (isNumber.isNotEmpty() && isNumber[isNumber.size - 1]) {
+                    expression[expression.size - 1] = expression.last() as Int * 10 + char.toString().toInt()
+                } else {
+                    addNumber(char.toString().toInt())
+                }
+            }
+        }
+    }
+
+    constructor(openingIndex: Int, expressionArg: Expression): this() {
+        for (i in openingIndex until expressionArg.size) {
+            if (expressionArg.isNumber(i)) {
+                addNumber(expressionArg.getNumberAt(i))
+            } else {
+                addOperator(expressionArg.getOperatorAt(i))
+            }
+        }
+    }
+
+    constructor(expressionArg: Expression): this() {
+        for (i in 0 until expressionArg.size) {
+            if (expressionArg.isNumber(i)) {
+                addNumber(expressionArg.getNumberAt(i))
+            } else {
+                addOperator(expressionArg.getOperatorAt(i))
             }
         }
     }
@@ -56,13 +85,39 @@ class Expression() {
         isNumber.set(index, false)
     }
 
+    fun isNumber(index: Int): Boolean {
+        return isNumber[index]
+    }
+
+    fun isOperator(index: Int): Boolean {
+        return !isNumber[index]
+    }
+
+    fun getNumberAt(index: Int): Int {
+        if (!isNumber(index)) {
+            throw TypeMismatchException("Error: The element you are trying to access is not of type Int")
+        }
+
+        return expression[index] as Int
+    }
+
+    fun getOperatorAt(index: Int): Operator {
+        if (!isOperator(index)) {
+            throw TypeMismatchException("Error: The element you are trying to access is not of type Operator")
+        }
+
+        return expression[index] as Operator
+    }
+
+    fun getSurroundingNumbers(index: Int): Pair<Int, Int> {
+        return Pair(getNumberAt(index - 1), getNumberAt(index + 1))
+    }
+
     override fun toString(): String {
         var classString = ""
 
         for (i in 0 until expression.size) {
             classString += (expression[i].toString())
-
-            print(isNumber[i].toString() + " ")
         }
 
         return classString
