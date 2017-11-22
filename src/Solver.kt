@@ -1,17 +1,57 @@
 
 class Solver {
 
+    private var remainingClosingParentheses = 0
+
     fun solve(expressionArg: Expression): Int {
         val expression = Expression(expressionArg)
+        var deletedParentheses = 0
 
-//        for (i in 0 until expression.size) {
-//            if (expression.isOperator(i) && expression.getOperatorAt(i).id == Operator.OPEN_PARENTHESIS_ID) {
-//                val tempExpression = Expression(i + 1, expression)
-//                solveParentheses(tempExpression)
-//            }
-//        }
+        var loopCtr = 0
+        while (loopCtr < expression.size) {
+            if (expression.isOperator(loopCtr)) {
+                if (expression.getOperatorAt(loopCtr).id == Operator.CLOSE_PARENTHESIS_ID) {
+                    for (i in 0 until expression.size - loopCtr) {
+                        expression.removeAt(loopCtr)
+                    }
 
-        for (i in 2 downTo 0) {
+                    return solveSimple(expression)
+                }
+
+                if (expression.getOperatorAt(loopCtr).id == Operator.OPEN_PARENTHESIS_ID) {
+                    val tempExpression = Expression(loopCtr + 1, expression)
+                    val parenthesisSolution = solve(tempExpression)
+                    expression.setNumberAt(loopCtr, parenthesisSolution)
+                    remainingClosingParentheses++
+
+                    for (i in loopCtr + 1 until expression.size) {
+                        if (deletedParentheses == remainingClosingParentheses) {
+                            break
+                        }
+
+                        if (expression.isOperator(loopCtr + 1)) {
+                            if (expression.getOperatorAt(loopCtr + 1).id == Operator.CLOSE_PARENTHESIS_ID) {
+                                deletedParentheses++
+                            }
+                        }
+
+                        expression.removeAt(loopCtr + 1)
+                    }
+                }
+
+            }
+
+            loopCtr++
+        }
+
+        remainingClosingParentheses = 0
+        return solveSimple(expression)
+    }
+
+    private fun solveSimple(expressionArg: Expression): Int {
+        val expression = Expression(expressionArg)
+
+        for (i in Operator.HIERARCHY_AMOUNT - 1 downTo 0) {
             var loopCtr = 0
             while (loopCtr < expression.size) {
 
@@ -29,10 +69,6 @@ class Solver {
         }
 
         return expression.getNumberAt(0)
-    }
-
-    fun solveParentheses(expression: Expression) {
-
     }
 
 }

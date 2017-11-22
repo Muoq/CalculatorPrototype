@@ -4,7 +4,7 @@ import java.util.*
 class Expression() {
 
     companion object {
-        val operators = listOf('(', ')', '*', '/', '+', '-')
+        val operators = listOf('(', ')','p', '*', '/', '+', '-')
     }
 
     var expression: MutableList<Any> = mutableListOf()
@@ -85,13 +85,10 @@ class Expression() {
         isNumber.set(index, false)
     }
 
-    fun isNumber(index: Int): Boolean {
-        return isNumber[index]
-    }
+    fun isNumber(index: Int) = isNumber[index]
 
-    fun isOperator(index: Int): Boolean {
-        return !isNumber[index]
-    }
+
+    fun isOperator(index: Int) = !isNumber[index]
 
     fun getNumberAt(index: Int): Int {
         if (!isNumber(index)) {
