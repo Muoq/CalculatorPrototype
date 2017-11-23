@@ -1,14 +1,14 @@
 import com.sun.corba.se.impl.io.TypeMismatchException
-import java.util.*
+import java.math.BigDecimal
 
 class Expression() {
 
     companion object {
-        val operators = listOf('(', ')','p', '*', '/', '+', '-')
+        val operators = Operator.validOperators
     }
 
-    var expression: MutableList<Any> = mutableListOf()
-    var isNumber: MutableList<Boolean> = mutableListOf()
+    private var expression: MutableList<Any> = mutableListOf()
+    private var isNumber: MutableList<Boolean> = mutableListOf()
 
     var size: Int = 0
         get() {
@@ -23,9 +23,9 @@ class Expression() {
                 continue
             } else {
                 if (isNumber.isNotEmpty() && isNumber[isNumber.size - 1]) {
-                    expression[expression.size - 1] = expression.last() as Int * 10 + char.toString().toInt()
+                    expression[expression.size - 1] = expression.last() as BigDecimal * BigDecimal(10) + BigDecimal(char.toString())
                 } else {
-                    addNumber(char.toString().toInt())
+                    addNumber(BigDecimal(char.toString()))
                 }
             }
         }
@@ -51,7 +51,7 @@ class Expression() {
         }
     }
 
-    fun addNumber(num: Int) {
+    fun addNumber(num: BigDecimal) {
         expression.add(num)
         isNumber.add(true)
         size++
@@ -75,7 +75,7 @@ class Expression() {
         size--
     }
 
-    fun setNumberAt(index: Int, num: Int) {
+    fun setNumberAt(index: Int, num: BigDecimal) {
         expression.set(index, num)
         isNumber.set(index, true)
     }
@@ -90,12 +90,12 @@ class Expression() {
 
     fun isOperator(index: Int) = !isNumber[index]
 
-    fun getNumberAt(index: Int): Int {
+    fun getNumberAt(index: Int): BigDecimal {
         if (!isNumber(index)) {
             throw TypeMismatchException("Error: The element you are trying to access is not of type Int")
         }
 
-        return expression[index] as Int
+        return expression[index] as BigDecimal
     }
 
     fun getOperatorAt(index: Int): Operator {
@@ -106,7 +106,7 @@ class Expression() {
         return expression[index] as Operator
     }
 
-    fun getSurroundingNumbers(index: Int): Pair<Int, Int> {
+    fun getSurroundingNumbers(index: Int): Pair<BigDecimal, BigDecimal> {
         return Pair(getNumberAt(index - 1), getNumberAt(index + 1))
     }
 

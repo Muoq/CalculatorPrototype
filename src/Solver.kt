@@ -1,9 +1,10 @@
+import java.math.BigDecimal
 
 class Solver {
 
     private var remainingClosingParentheses = 0
 
-    fun solve(expressionArg: Expression): Int {
+    fun solve(expressionArg: Expression): BigDecimal {
         val expression = Expression(expressionArg)
         var deletedParentheses = 0
 
@@ -48,7 +49,7 @@ class Solver {
         return solveSimple(expression)
     }
 
-    private fun solveSimple(expressionArg: Expression): Int {
+    private fun solveSimple(expressionArg: Expression): BigDecimal {
         val expression = Expression(expressionArg)
 
         for (i in Operator.HIERARCHY_AMOUNT - 1 downTo 0) {
